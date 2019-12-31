@@ -22,7 +22,8 @@ from tqdm import tqdm, trange
 
 from utils.data_utils import ATEPCProcessor, convert_examples_to_features
 
-from model.lcf_atepc_chinese import LCF_ATEPC_Chinese, BertModel
+from model.lcf_atepc_chinese import LCF_ATEPC_Chinese
+from pytorch_transformers import BertModel
 
 from sklearn.metrics import f1_score
 from time import strftime, localtime
@@ -69,7 +70,7 @@ def main(config):
     }
 
     if args.dataset in {'laptop','restaurant','twitter','mixed'}:
-        logger.warning("\n\nThis is the training script for English and multilingual review dataset,"
+        logger.warning("\n\nThis is the training script for Chinese review dataset,"
                        " DO NOT use this script to train model on {} dataset!!!\n\n".format( args.dataset))
 
 
@@ -310,7 +311,6 @@ def parse_experiments(path):
                             help="The initial learning rate for Adam.")
         parser.add_argument("--bert_base", default=config['bert_base'], type=bool,
                             help="Use the BERT-Base model instead of LCF-ATEPC model")
-        # parser.add_argument("--bert_model", default='bert-base-uncased' if 'bert_model' not in config.keys() else config['bert_model'], type=str)
         parser.add_argument("--local_context_focus", default= None if 'None' in config['local_context_focus'] else config['local_context_focus'] , type=str)
         parser.add_argument("--num_train_epochs", default=float(config['num_train_epochs']), type=float,
                             help="Total number of training epochs to perform.")
@@ -324,7 +324,6 @@ def parse_experiments(path):
         ## Other parameters
         parser.add_argument("--eval_batch_size", default=32, type=int, help="Total batch size for eval.")
         parser.add_argument("--eval_steps", default=5, help="evaluate per steps")
-        # parser.add_argument("--device", default=device, type=str, help="evaluate per steps")
         parser.add_argument("--warmup_proportion", default=0.4, type=float,
                             help="Proportion of training to perform linear learning rate warmup for. E.g., 0.1 = 10%% of training.")
         parser.add_argument('--gradient_accumulation_steps', type=int, default=1,
