@@ -22,8 +22,9 @@ from tqdm import tqdm, trange
 
 from utils.data_utils import ATEPCProcessor, convert_examples_to_features
 
-from model.lcf_atepc import LCF_ATEPC, BertModel
-from model.lcf_atepc_chinese import LCF_ATEPC_Chinese, BertModel
+from model.lcf_atepc import LCF_ATEPC
+from model.lcf_atepc_chinese import LCF_ATEPC_Chinese
+from pytorch_transformers import BertModel
 
 from sklearn.metrics import f1_score
 from time import strftime, localtime
@@ -34,8 +35,6 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 
 time = '{}'.format(strftime("%y%m%d-%H%M%S", localtime()))
 os.mkdir('logs/{}'.format(time))
-os.system('cp -r *.py logs/{}/'.format(time))
-os.system('cp -r model/*.py logs/{}/'.format(time))
 log_file = 'logs/{}/{}.log'.format(time, time)
 logger.addHandler(logging.FileHandler(log_file))
 
@@ -78,8 +77,7 @@ def main(config):
         'car': "bert-base-chinese",
         'phone': "bert-base-chinese",
         'notebook': "bert-base-chinese",
-        # 'laptop': "bert-base-uncased",
-        'laptop': "bert_pretrained_laptop",
+        'laptop': "bert-base-uncased",
         'restaurant': "bert-base-uncased",
         'twitter': "bert-base-uncased",
         'mixed': "bert-base-multilingual-uncased",
@@ -141,10 +139,12 @@ def main(config):
         model.eval()
         label_map = {i: label for i, label in enumerate(label_list, 1)}
         for input_ids_spc, input_mask, segment_ids, label_ids, polarities, valid_ids, l_mask in eval_dataloader:
+            input_ids_spc = model.get_ids_for_local_context_extractor(input_ids_spc)
             input_ids_spc = input_ids_spc.to(device)
             input_mask = input_mask.to(device)
             segment_ids = segment_ids.to(device)
             valid_ids = valid_ids.to(device)
+            label_ids = model.get_batch_token_labels_bert_base_indices(label_ids, input_ids_spc)
             label_ids = label_ids.to(device)
             polarities = polarities.to(device)
             l_mask = l_mask.to(device)
@@ -181,9 +181,8 @@ def main(config):
                             y_pred.append(temp_2)
                             break
                         else:
-                            temp_1.append(label_map[label_ids[i][j]])
-                            if not (0 < ate_logits[i][j] < 5): ate_logits[i][j] = 1
-                            temp_2.append(label_map[ate_logits[i][j]])
+                            temp_1.append(label_map.get(label_ids[i][j], 1))
+                            temp_2.append(label_map.get(ate_logits[i][j], 1))
 
         test_acc = n_test_correct / n_test_total
         test_f1 = f1_score(torch.argmax(test_apc_logits_all, -1).cpu(), test_polarities_all.cpu(),

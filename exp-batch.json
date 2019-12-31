@@ -2,7 +2,7 @@
      "config1": {
     "dataset": "laptop",
     "output_dir": "output",
-    "bert_base": false,
+    "bert_base": true,
     "SRD": 5,
     "learning_rate": 3e-5,
     "dropout": 0,

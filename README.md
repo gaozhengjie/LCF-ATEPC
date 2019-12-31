@@ -12,11 +12,13 @@ codes for paper [A Multi-task Learning Model for Chinese-oriented Aspect Polarit
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-multi-task-learning-model-for-chinese/aspect-based-sentiment-analysis-on-semeval)](https://paperswithcode.com/sota/aspect-based-sentiment-analysis-on-semeval?p=a-multi-task-learning-model-for-chinese)
 
+# Removed the BERT-SPC input format from ATE task.
+
 ## Requirement
 
 * Python >= 3.7
 * PyTorch >= 1.0
-* [pytorch-transformers](https://github.com/huggingface/pytorch-transformers) >= 1.2.0
+* [pytorch-transformers](https://github.com/huggingface/pytorch-transformers) >= 0.6.1
 
 
 ## Training
@@ -40,18 +42,6 @@ Since BERT models require a lot of memory. If the out-of-memory problem while tr
 1. Reduce the training batch size ( train_batch_size = 4 or 8 )
 2. Reduce the longest input sequence ( max_seq_length = 40 or 60 )
 3. Use a unique BERT layer to model for both local and global contexts
-
-## Model Performance
-
-### Performance on the SemEval-2014 Task4 Datesets and Multilingual Dataset（Without Adapted BERT）
-
-![SemEval](assets/multilingual-results.png)
-
-### Optimal Performance on the SemEval-2014 Task4 Datasets
-
-![Chinese](assets/SemEval-2014-results.png)
-
-Full experimental results and performance comparisons can be obtained from our [paper]((https://arxiv.org/abs/1912.07976)).
 
 ## Model Architecture
 ![lcf](assets/lcf-atepc.png)

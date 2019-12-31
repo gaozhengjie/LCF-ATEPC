@@ -26,7 +26,6 @@ class SelfAttention(nn.Module):
                                             dtype=np.float32), dtype=torch.float32).to(self.args.device)
         SA_out = self.SA(inputs, zero_tensor)
         return self.tanh(SA_out[0])
-        # return SA_out[0]
 
 class LCF_ATEPC(BertForTokenClassification):
 
@@ -118,6 +117,18 @@ class LCF_ATEPC(BertForTokenClassification):
             text_ids[text_i][sep_index + 1:] = 0
         return torch.tensor(text_ids).to(self.args.device)
         # return torch.tensor(text_indices).to(self.args.device)
+
+    def get_batch_token_labels_bert_base_indices(self, labels, bert_base_indices):
+        if labels is None:
+            return
+        labels = labels.detach().cpu().numpy()
+        bert_base_indices = bert_base_indices.detach().cpu().numpy()
+        bert_base_indices = np.array(bert_base_indices > 0)
+        token_labels = []
+        for labels, indices in zip(labels, bert_base_indices):
+            token_labels.append(labels * indices)
+        labels = torch.from_numpy(np.array(token_labels)).long().to(self.args.device)
+        return labels
 
     def forward(self, input_ids_spc, token_type_ids=None, attention_mask=None, labels=None, polarities=None, valid_ids=None,
                 attention_mask_label=None):

@@ -1,7 +1,7 @@
 {
   "config1": {
     "dataset": "phone",
-    "bert_base": false,
+    "bert_base": true,
     "output_dir": "output",
     "SRD": 5,
     "learning_rate": 3e-5,
