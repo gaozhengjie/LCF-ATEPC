@@ -69,7 +69,7 @@ def main(config):
         'twitter': "atepc_datasets/twitter",
         'mixed': "atepc_datasets/mixed",
     }
-    if args.dataset in {'camera','car','phone','notebook'}:
+    if args.dataset not in {'camera','car','phone','notebook'}:
         logger.warning("\n\nThis is the training script for Chinese review dataset,"
                        " DO NOT use this script to train model on {} dataset!!!\n\n".format(args.dataset))
     pretrained_bert_models = {
@@ -292,8 +292,7 @@ def parse_experiments(path):
         parser.add_argument("--learning_rate", default=float(config['learning_rate']), type=float,
                             help="The initial learning rate for Adam.")
         parser.add_argument("--bert_base", default=config['bert_base'], type=bool,
-                            help="Use the BERT-Base model instead of LCF-ATEPC model")
-        # parser.add_argument("--bert_model", default='bert-base-uncased' if 'bert_model' not in config.keys() else config['bert_model'], type=str)
+                            help="Use the BERT-Base model instead of LCF-ATEPC model") type=str)
         parser.add_argument("--local_context_focus",
                             default=None if 'None' in config['local_context_focus'] else config['local_context_focus'],
                             type=str)
@@ -322,7 +321,7 @@ def parse_experiments(path):
 if __name__ == "__main__":
 
     experiments = argparse.ArgumentParser()
-    experiments.add_argument('--config_path',default='exp-batch.json',type=str,help='Path of experiments config file')
+    experiments.add_argument('--config_path', default='exp-batch.json',type=str,help='Path of experiments config file.')
     experiments = experiments.parse_args()
 
     from utils.Pytorch_GPUManager import GPUManager
